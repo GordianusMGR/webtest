@@ -1,0 +1,78 @@
+* {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(circle at center, #000000, #0a0a0a);
+      overflow: hidden;
+    }
+
+    .startup-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      animation: fadeIn 1.2s ease forwards;
+      opacity: 0;
+    }
+
+    h1 {
+      font-size: 4rem;
+      color: #0084ff;
+      margin-bottom: 40px;
+      animation: slideInDown 1.2s ease forwards;
+    }
+
+    #startBtn {
+      padding: 16px 48px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 40px;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: all 0.3s ease;
+    }
+
+    #startBtn:hover {
+      background: rgba(248, 96, 228, 0.212);
+      transform: scale(1.05);
+    }
+
+    .fade-out {
+      animation: fadeOut 1s ease forwards;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        transform: scale(1.05);
+        pointer-events: none;
+      }
+    }
+
+    @keyframes slideInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }

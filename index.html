@@ -55,6 +55,32 @@
       transform: scale(1.05);
     }
 
+    .fade-out {
+      animation: fadeOut 1s ease forwards;
+    }
+
+    /* Animations */
+    @keyframes fadeIn { to { opacity: 1; } }
+    @keyframes fadeOut { to { opacity: 0; transform: scale(1.05); pointer-events: none; } }
+    @keyframes slideInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+
+    @keyframes float { 0% { transform: translateY(0px); } 100% { transform: translateY(-10px); } }
+
+    /* LEFT image */
+    .PicLeft img {
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      animation: float 3s ease-in-out infinite alternate;
+    }
+
+    /* ORIGINAL RIGHT image */
+    .PicRight img {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      animation: float 3s ease-in-out infinite alternate;
+    }
 
 
 
@@ -62,6 +88,15 @@
 </head>
 <body>
 
+  <!-- ORIGINAL LEFT -->
+  <div class="PicLeft">  
+    <img src="assets/img/lefttvgirlcat.png" alt="Left Picture">
+  </div>
+
+  <!-- ORIGINAL RIGHT -->
+  <div class="PicRight">
+    <img src="assets/img/righttvgirlcat.png" alt="Right Picture">
+  </div>
 
 
   <!-- Startup container -->
