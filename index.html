@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>User Messages</title>
   <style>
     body {
@@ -16,10 +16,7 @@
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
 
-    h1, h2 {
-      text-align: center;
-      color: #333;
-    }
+    h1, h2 { text-align: center; color: #333; }
 
     form {
       display: flex;
@@ -42,9 +39,7 @@
       border: none;
     }
 
-    button:hover {
-      background-color: #0056b3;
-    }
+    button:hover { background-color: #0056b3; }
 
     .message {
       background: #f1f1f1;
@@ -54,16 +49,14 @@
       border-radius: 4px;
     }
 
-    .message strong {
-      color: #007BFF;
-    }
+    .message strong { color: #007BFF; }
   </style>
 </head>
 <body>
   <h1>Leave a Message</h1>
 
   <form id="messageForm">
-    <input type="text" id="name" placeholder="Your Name" required>
+    <input type="text" id="name" placeholder="Your Name" required />
     <textarea id="message" placeholder="Your Message" rows="3" required></textarea>
     <button type="submit">Send Message</button>
   </form>
@@ -75,49 +68,44 @@
     const form = document.getElementById('messageForm');
     const messagesDiv = document.getElementById('messages');
 
-    // Submit message
+    async function loadMessages() {
+      try {
+        const res = await fetch('/.netlify/functions/getUsers');
+        const data = await res.json();
+
+        if (!data || data.length === 0) {
+          messagesDiv.innerHTML = "<p>No messages yet. Be the first!</p>";
+          return;
+        }
+
+        messagesDiv.innerHTML = data.map(m => `
+          <div class="message">
+            <strong>${m.name}</strong><br>${m.message}
+          </div>
+        `).join('');
+      } catch (err) {
+        console.error(err);
+        messagesDiv.innerHTML = "<p>Error loading messages.</p>";
+      }
+    }
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-
       const name = document.getElementById('name').value.trim();
       const message = document.getElementById('message').value.trim();
+      if (!name || !message) return alert("Please fill out both fields.");
 
-      if (!name || !message) return alert("Please enter both fields!");
+      const res = await fetch('/.netlify/functions/saveUser', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, message })
+      });
 
-      const response = await fetch('/.netlify/functions/saveUser', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ name, message }),
-});
-
-const result = await response.json();
-alert(result.message);
-
+      const result = await res.json();
+      alert(result.message);
       form.reset();
       loadMessages();
     });
-
-    // Load all messages
-    async function loadMessages() {
-      const res = await fetch('/.netlify/functions/getUsers');
-      if (!res.ok) {
-        messagesDiv.innerHTML = "<p>Could not load messages.</p>";
-        return;
-      }
-
-      const data = await res.json();
-      if (data.length === 0) {
-        messagesDiv.innerHTML = "<p>No messages yet. Be the first!</p>";
-        return;
-      }
-
-      messagesDiv.innerHTML = data.map(item => `
-        <div class="message">
-          <strong>${item.name}</strong><br>
-          ${item.message}
-        </div>
-      `).join('');
-    }
 
     loadMessages();
   </script>
