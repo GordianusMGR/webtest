@@ -1,108 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Startup Screen</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+<form id="userForm">
+  <input type="text" id="name" placeholder="Your Name" required>
+  <input type="text" id="message" placeholder="Your Message" required>
+  <button type="submit">Send</button>
+</form>
 
-    html, body {
-      height: 100%;
-      width: 100%;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: radial-gradient(circle at center, #1e1e1e, #0a0a0a);
-      overflow: hidden;
-    }
+<div id="messages"></div>
 
-    .startup-container {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-      animation: fadeIn 1.2s ease forwards;
-      opacity: 0;
-    }
+<script>
+  const form = document.getElementById('userForm');
+  const messagesDiv = document.getElementById('messages');
 
-    h1 {
-      font-size: 4rem;
-      color: #ffffff;
-      margin-bottom: 40px;
-      animation: slideInDown 1.2s ease forwards;
-    }
+  // Handle submit
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-    #startBtn {
-      padding: 16px 48px;
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: #ffffff;
-      background: rgba(255, 255, 255, 0.1);
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-radius: 40px;
-      cursor: pointer;
-      backdrop-filter: blur(4px);
-      transition: all 0.3s ease;
-    }
+    const name = document.getElementById('name').value;
+    const message = document.getElementById('message').value;
 
-    #startBtn:hover {
-      background: rgba(255, 255, 255, 0.2);
-      transform: scale(1.05);
-    }
-
-    .fade-out {
-      animation: fadeOut 1s ease forwards;
-    }
-
-    /* Animations */
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-      }
-    }
-
-    @keyframes fadeOut {
-      to {
-        opacity: 0;
-        transform: scale(1.05);
-        pointer-events: none;
-      }
-    }
-
-    @keyframes slideInDown {
-      from {
-        opacity: 0;
-        transform: translateY(-30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-  </style>
-</head>
-<body>
-
-  <div class="startup-container" id="startupScreen">
-    <h1>Welcome</h1>
-    <button id="startBtn">Start</button>
-  </div>
-
-  <script>
-    const startBtn = document.getElementById("startBtn");
-    const startupScreen = document.getElementById("startupScreen");
-
-    startBtn.addEventListener("click", () => {
-      startupScreen.classList.add("fade-out");
-
-      setTimeout(() => {
-        window.location.href = "menu.html"; // Your actual menu page
-      }, 1000);
+    const response = await fetch('/.netlify/functions/saveUser', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, message }),
     });
-  </script>
 
-</body>
-</html>
+    const result = await response.json();
+    alert(result.message);
+
+    form.reset();
+    loadMessages();
+  });
+
+  // Load all messages
+  async function loadMessages() {
+    const res = await fetch('/.netlify/functions/getUsers');
+    const data = await res.json();
+    messagesDiv.innerHTML = data
+      .map(item => `<p><b>${item.name}</b>: ${item.message}</p>`)
+      .join('');
+  }
+
+  loadMessages();
+</script>
