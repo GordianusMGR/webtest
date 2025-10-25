@@ -1,14 +1,53 @@
-const nameInput = document.getElementById('name');
-const messageInput = document.getElementById('message');
-const submitBtn = document.getElementById('submit-btn');
+const form = document.getElementById('messageForm');
 const messagesDiv = document.getElementById('messages');
 let messagesMap = new Map();
 
-// Submit message
-submitBtn.addEventListener('click', async () => {
-  const name = nameInput.value.trim();
-  const message = messageInput.value.trim();
-  if (!name || !message) return alert('Enter name & message.');
+// Create a message element with animation
+function createMessageElement(message) {
+  const div = document.createElement('div');
+  div.classList.add('message');
+  div.dataset.id = message._id;
+  div.innerHTML = `<strong>${message.name}</strong><br>${message.message}`;
+  setTimeout(() => div.classList.add('show'), 50);
+  return div;
+}
+
+// Load messages and handle fade-out for deleted ones
+async function loadMessages() {
+  try {
+    const res = await fetch('/.netlify/functions/getUsers');
+    const data = await res.json();
+    const newMessageIds = new Set(data.map(m => m._id));
+
+    // Remove deleted messages
+    messagesMap.forEach((element, id) => {
+      if (!newMessageIds.has(id)) {
+        element.classList.add('fade-out');
+        setTimeout(() => element.remove(), 400);
+        messagesMap.delete(id);
+      }
+    });
+
+    // Add new messages
+    data.forEach(msg => {
+      if (!messagesMap.has(msg._id)) {
+        const messageElement = createMessageElement(msg);
+        messagesDiv.appendChild(messageElement);
+        messagesMap.set(msg._id, messageElement);
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    messagesDiv.innerHTML = "<p>Error loading messages.</p>";
+  }
+}
+
+// Submit form
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const name = document.getElementById('name').value.trim();
+  const message = document.getElementById('message').value.trim();
+  if (!name || !message) return alert("Please fill out both fields.");
 
   try {
     const res = await fetch('/.netlify/functions/saveUser', {
@@ -16,67 +55,22 @@ submitBtn.addEventListener('click', async () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, message })
     });
+
     const result = await res.json();
-    if (!result.data) throw new Error('No data returned');
+    alert(result.message);
 
-    const el = createMessageElement(result.data);
-    messagesDiv.prepend(el);
-    messagesMap.set(result.data._id, el);
+    // Add immediately
+    const newMessage = createMessageElement(result.data);
+    messagesDiv.prepend(newMessage);
+    messagesMap.set(result.data._id, newMessage);
 
-    nameInput.value = '';
-    messageInput.value = '';
+    form.reset();
   } catch (err) {
     console.error(err);
-    alert('Error sending message.');
+    alert("Error saving message.");
   }
 });
 
-function createMessageElement(msg) {
-  const div = document.createElement('div');
-  div.classList.add('message', 'new');
-  div.dataset.id = msg._id;
-  div.innerHTML = `<strong>${msg.name}</strong><br>${msg.message}`;
-
-  setTimeout(() => {
-    div.classList.add('show');
-    div.classList.remove('new');
-  }, 50);
-  return div;
-}
-
-async function loadMessages() {
-  try {
-    const res = await fetch('/.netlify/functions/getUsers');
-    const data = await res.json();
-    if (!Array.isArray(data)) throw new Error('Invalid data');
-
-    const newIds = new Set(data.map(m => m._id));
-
-    // Remove deleted
-    messagesMap.forEach((el, id) => {
-      if (!newIds.has(id)) {
-        el.classList.add('fade-out');
-        setTimeout(() => el.remove(), 400);
-        messagesMap.delete(id);
-      }
-    });
-
-    // Add new
-    data.forEach(msg => {
-      if (!messagesMap.has(msg._id)) {
-        const el = createMessageElement(msg);
-        messagesDiv.prepend(el);
-        messagesMap.set(msg._id, el);
-      }
-    });
-
-    messagesDiv.scrollTo({ top: 0, behavior: 'smooth' });
-
-  } catch (err) {
-    console.error(err);
-    messagesDiv.innerHTML = "<p>Error loading messages.</p>";
-  }
-}
-
-setInterval(loadMessages, 5000);
+// Initial load & auto-refresh
 loadMessages();
+setInterval(loadMessages, 5000);
