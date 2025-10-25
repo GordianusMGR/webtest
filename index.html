@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Startup Screen</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(circle at center, #030303, #030303);
+      overflow: hidden;
+    }
+
+    /* Startup container */
+    .startup-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      animation: fadeIn 1.2s ease forwards;
+      opacity: 0;
+      z-index: 2;
+    }
+
+    h1 {
+      font-size: 4rem;
+      color: #0084ff;
+      margin-bottom: 40px;
+      animation: slideInDown 1.2s ease forwards;
+    }
+
+    #startBtn {
+      padding: 16px 48px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 40px;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: all 0.3s ease;
+    }
+
+    #startBtn:hover {
+      background: rgba(248, 96, 228, 0.212);
+      transform: scale(1.05);
+    }
+
+
+
+
+  </style>
+</head>
+<body>
+
+
+
+  <!-- Startup container -->
+  <div class="startup-container" id="startupScreen">
+    <h1>Hey</h1>
+    <button id="startBtn">What?</button>
+  </div>
+
+  <script>
+    const startBtn = document.getElementById("startBtn");
+    const startupScreen = document.getElementById("startupScreen");
+
+    startBtn.addEventListener("click", () => {
+      startupScreen.classList.add("fade-out");
+      setTimeout(() => {
+        window.location.href = "lyrics.html";
+      }, 1000);
+    });
+  </script>
+
+</body>
+</html>
