@@ -4,11 +4,11 @@ const submitBtn = document.getElementById('submit-btn');
 const messagesDiv = document.getElementById('messages');
 let messagesMap = new Map();
 
-// Submit new message
+// Submit message
 submitBtn.addEventListener('click', async () => {
   const name = nameInput.value.trim();
   const message = messageInput.value.trim();
-  if (!name || !message) return alert('Please enter name and message.');
+  if (!name || !message) return alert('Enter name & message.');
 
   try {
     const res = await fetch('/.netlify/functions/saveUser', {
@@ -17,12 +17,11 @@ submitBtn.addEventListener('click', async () => {
       body: JSON.stringify({ name, message })
     });
     const result = await res.json();
+    if (!result.data) throw new Error('No data returned');
 
-    if (!result.data) throw new Error('Invalid response from server');
-
-    const newMessage = createMessageElement(result.data);
-    messagesDiv.prepend(newMessage); // newest on top
-    messagesMap.set(result.data._id, newMessage);
+    const el = createMessageElement(result.data);
+    messagesDiv.prepend(el);
+    messagesMap.set(result.data._id, el);
 
     nameInput.value = '';
     messageInput.value = '';
@@ -32,31 +31,28 @@ submitBtn.addEventListener('click', async () => {
   }
 });
 
-// Create message element with animation
 function createMessageElement(msg) {
   const div = document.createElement('div');
   div.classList.add('message', 'new');
-  div.dataset.id = msg._id; // store id
+  div.dataset.id = msg._id;
   div.innerHTML = `<strong>${msg.name}</strong><br>${msg.message}`;
 
   setTimeout(() => {
-    div.classList.add('show'); // trigger CSS transition
+    div.classList.add('show');
     div.classList.remove('new');
   }, 50);
-
   return div;
 }
 
-// Load messages from server
 async function loadMessages() {
   try {
     const res = await fetch('/.netlify/functions/getUsers');
     const data = await res.json();
-    if (!Array.isArray(data)) throw new Error('Invalid data format');
+    if (!Array.isArray(data)) throw new Error('Invalid data');
 
     const newIds = new Set(data.map(m => m._id));
 
-    // Remove deleted messages
+    // Remove deleted
     messagesMap.forEach((el, id) => {
       if (!newIds.has(id)) {
         el.classList.add('fade-out');
@@ -65,7 +61,7 @@ async function loadMessages() {
       }
     });
 
-    // Add new messages
+    // Add new
     data.forEach(msg => {
       if (!messagesMap.has(msg._id)) {
         const el = createMessageElement(msg);
@@ -74,7 +70,6 @@ async function loadMessages() {
       }
     });
 
-    // Always scroll to top
     messagesDiv.scrollTo({ top: 0, behavior: 'smooth' });
 
   } catch (err) {
@@ -83,6 +78,5 @@ async function loadMessages() {
   }
 }
 
-// Auto-refresh every 5 seconds
 setInterval(loadMessages, 5000);
 loadMessages();
