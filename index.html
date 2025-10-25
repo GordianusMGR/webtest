@@ -14,11 +14,10 @@
       height: 100%;
       width: 100%;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: radial-gradient(circle at center, #030303, #030303);
+      background: radial-gradient(circle at center, #1e1e1e, #0a0a0a);
       overflow: hidden;
     }
 
-    /* Startup container */
     .startup-container {
       position: absolute;
       top: 50%;
@@ -27,12 +26,11 @@
       text-align: center;
       animation: fadeIn 1.2s ease forwards;
       opacity: 0;
-      z-index: 2;
     }
 
     h1 {
       font-size: 4rem;
-      color: #0084ff;
+      color: #ffffff;
       margin-bottom: 40px;
       animation: slideInDown 1.2s ease forwards;
     }
@@ -51,7 +49,7 @@
     }
 
     #startBtn:hover {
-      background: rgba(248, 96, 228, 0.212);
+      background: rgba(255, 255, 255, 0.2);
       transform: scale(1.05);
     }
 
@@ -60,49 +58,37 @@
     }
 
     /* Animations */
-    @keyframes fadeIn { to { opacity: 1; } }
-    @keyframes fadeOut { to { opacity: 0; transform: scale(1.05); pointer-events: none; } }
-    @keyframes slideInDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
-
-    @keyframes float { 0% { transform: translateY(0px); } 100% { transform: translateY(-10px); } }
-
-    /* LEFT image */
-    .PicLeft img {
-      position: absolute;
-      left: 20px;
-      top: 20px;
-      animation: float 3s ease-in-out infinite alternate;
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
     }
 
-    /* ORIGINAL RIGHT image */
-    .PicRight img {
-      position: absolute;
-      right: 20px;
-      top: 20px;
-      animation: float 3s ease-in-out infinite alternate;
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        transform: scale(1.05);
+        pointer-events: none;
+      }
     }
 
-
-
+    @keyframes slideInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
   </style>
 </head>
 <body>
 
-  <!-- ORIGINAL LEFT -->
-  <div class="PicLeft">  
-    <img src="assets/img/lefttvgirlcat.png" alt="Left Picture">
-  </div>
-
-  <!-- ORIGINAL RIGHT -->
-  <div class="PicRight">
-    <img src="assets/img/righttvgirlcat.png" alt="Right Picture">
-  </div>
-
-
-  <!-- Startup container -->
   <div class="startup-container" id="startupScreen">
-    <h1>Hey</h1>
-    <button id="startBtn">What?</button>
+    <h1>Welcome</h1>
+    <button id="startBtn">Start</button>
   </div>
 
   <script>
@@ -111,8 +97,9 @@
 
     startBtn.addEventListener("click", () => {
       startupScreen.classList.add("fade-out");
+
       setTimeout(() => {
-        window.location.href = "lyrics.html";
+        window.location.href = "menu.html"; // Your actual menu page
       }, 1000);
     });
   </script>

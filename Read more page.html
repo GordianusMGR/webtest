@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en"></html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!--=============== CSS ===============-->
+    <link rel="stylesheet" href="assets/css/second.css">
+
+    <title>Landscape responsive card - Bedimcode</title>
+     <style>
+        canvas {
+        position: absolute;
+        left:0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,.2);
+        }
+    </style>
+</head>
+<body>
+<canvas id="heart"></canvas>
+    </body>
+    </html>
+    <script >
+    (function(){
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = '← Back';
+        btn.className = 'back-button';
+        btn.style.cssText = 'position:fixed;left:16px;top:16px;padding:8px 12px;border:none;background:#333;color:#fff;border-radius:4px;cursor:pointer;z-index:9999;';
+        btn.addEventListener('click', function(){
+            if (document.referrer && document.referrer !== '') {
+                history.back();
+            } else {
+                window.location.href = 'index.html';
+            }
+        });
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function(){ document.body.appendChild(btn); });
+        } else {
+            document.body.appendChild(btn);
+        }
+    })();
+    
+    </script>
