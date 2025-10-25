@@ -1,23 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Live Message Board</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+  <meta charset="UTF-8">
+  <title>Message Board</title>
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Message Board</h1>
-        <form id="messageForm">
-            <input type="text" id="name" placeholder="Your Name">
-            <textarea id="message" placeholder="Your Message"></textarea>
-            <button type="submit">Send</button>
-        </form>
+  <div class="container">
+    <h1>Leave a Message</h1>
+    <input type="text" id="name" placeholder="Your Name">
+    <textarea id="message" placeholder="Your Message"></textarea>
+    <button id="submit-btn">Send</button>
+    <div id="messages"><p>Loading messages...</p></div>
+  </div>
 
-        <h2>Messages</h2>
-        <div id="messages"><p>Loading messages...</p></div>
-    </div>
-
-    <script src="main.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>

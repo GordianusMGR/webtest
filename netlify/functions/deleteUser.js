@@ -1,37 +1,22 @@
-import { MongoClient, ObjectId } from "mongodb";
-
+const { MongoClient, ObjectId } = require('mongodb');
 const uri = process.env.MONGODB_URI;
-const dbName = "userMessagesDB";
+const client = new MongoClient(uri);
 
-export const handler = async (event) => {
-  if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: "Method Not Allowed" };
-  }
+exports.handler = async function(event) {
+  if (event.httpMethod !== 'DELETE') return { statusCode: 405, body: 'Method Not Allowed' };
+
+  const id = event.queryStringParameters?.id;
+  if (!id) return { statusCode: 400, body: 'Missing id' };
 
   try {
-    const { id } = JSON.parse(event.body);
-    if (!id) return { statusCode: 400, body: "Missing ID" };
-
-    const client = new MongoClient(uri);
     await client.connect();
-
-    const db = client.db(dbName);
-    const collection = db.collection("messages");
-
-    const result = await collection.deleteOne({ _id: new ObjectId(id) });
+    const db = client.db('mydatabase');
+    const collection = db.collection('messages');
+    await collection.deleteOne({ _id: new ObjectId(id) });
+    return { statusCode: 200, body: JSON.stringify({ message: 'Deleted successfully', id }) };
+  } catch (err) {
+    return { statusCode: 500, body: JSON.stringify({ error: err.message }) };
+  } finally {
     await client.close();
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        message: result.deletedCount ? "Message deleted" : "Message not found",
-      }),
-    };
-  } catch (error) {
-    console.error("Error deleting message:", error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ message: "Error deleting message" }),
-    };
   }
 };
