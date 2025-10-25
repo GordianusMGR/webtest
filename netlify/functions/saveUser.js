@@ -1,8 +1,8 @@
 import { MongoClient } from "mongodb";
 
-const uri = process.env.MONGODB_URI;
+const uri = process.env.MONGODB_URI; // stored securely in Netlify
 const client = new MongoClient(uri);
-const dbName = "userFormDB";
+const dbName = "userMessagesDB";
 
 export const handler = async (event) => {
   if (event.httpMethod !== "POST") {
@@ -17,17 +17,21 @@ export const handler = async (event) => {
 
     await client.connect();
     const db = client.db(dbName);
-    const collection = db.collection("messages");
+    const messages = db.collection("messages");
 
-    await collection.insertOne({ name, message, createdAt: new Date() });
+    await messages.insertOne({
+      name,
+      message,
+      createdAt: new Date(),
+    });
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ success: true, message: "Saved successfully!" }),
+      body: JSON.stringify({ message: "Message saved successfully!" }),
     };
   } catch (error) {
     console.error(error);
-    return { statusCode: 500, body: "Server error" };
+    return { statusCode: 500, body: "Error saving message" };
   } finally {
     await client.close();
   }
