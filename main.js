@@ -29,13 +29,14 @@ async function loadMessages() {
     });
 
     // Add new messages
-    data.forEach(msg => {
-      if (!messagesMap.has(msg._id)) {
-        const messageElement = createMessageElement(msg);
-        messagesDiv.appendChild(messageElement);
-        messagesMap.set(msg._id, messageElement);
-      }
-    });
+data.forEach(msg => {
+  if (!messagesMap.has(msg._id)) {
+    const messageElement = createMessageElement(msg);
+    messagesDiv.prepend(messageElement); // PREPEND instead of append
+    messagesMap.set(msg._id, messageElement);
+    
+  }
+});
   } catch (err) {
     console.error(err);
     messagesDiv.innerHTML = "<p>Error loading messages.</p>";
