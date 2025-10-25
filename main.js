@@ -65,10 +65,8 @@ form.addEventListener('submit', async (e) => {
     messagesDiv.prepend(newMessage);
     messagesMap.set(result.data._id, newMessage);
 
-    form.reset();
+
   } catch (err) {
-    console.error(err);
-    alert("Error saving message.");
   }
 });
 
