@@ -1,113 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>User Messages</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f7f7f7;
-      max-width: 600px;
-      margin: 2rem auto;
-      padding: 1rem;
-      border-radius: 8px;
-      background-color: white;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-
-    h1, h2 { text-align: center; color: #333; }
-
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      margin-bottom: 2rem;
-    }
-
-    input, textarea, button {
-      padding: 0.7rem;
-      font-size: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-
-    button {
-      background-color: #007BFF;
-      color: white;
-      cursor: pointer;
-      border: none;
-    }
-
-    button:hover { background-color: #0056b3; }
-
-    .message {
-      background: #f1f1f1;
-      border-left: 4px solid #007BFF;
-      padding: 0.8rem;
-      margin-bottom: 0.8rem;
-      border-radius: 4px;
-    }
-
-    .message strong { color: #007BFF; }
-  </style>
+    <meta charset="UTF-8">
+    <title>Live Message Board</title>
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-  <h1>Leave a Message</h1>
+    <div class="container">
+        <h1>Message Board</h1>
+        <form id="messageForm">
+            <input type="text" id="name" placeholder="Your Name">
+            <textarea id="message" placeholder="Your Message"></textarea>
+            <button type="submit">Send</button>
+        </form>
 
-  <form id="messageForm">
-    <input type="text" id="name" placeholder="Your Name" required />
-    <textarea id="message" placeholder="Your Message" rows="3" required></textarea>
-    <button type="submit">Send Message</button>
-  </form>
+        <h2>Messages</h2>
+        <div id="messages"><p>Loading messages...</p></div>
+    </div>
 
-  <h2>All Messages</h2>
-  <div id="messages">Loading messages...</div>
-
-  <script>
-    const form = document.getElementById('messageForm');
-    const messagesDiv = document.getElementById('messages');
-
-    async function loadMessages() {
-      try {
-        const res = await fetch('/.netlify/functions/getUsers');
-        const data = await res.json();
-
-        if (!data || data.length === 0) {
-          messagesDiv.innerHTML = "<p>No messages yet. Be the first!</p>";
-          return;
-        }
-
-        messagesDiv.innerHTML = data.map(m => `
-          <div class="message">
-            <strong>${m.name}</strong><br>${m.message}
-          </div>
-        `).join('');
-      } catch (err) {
-        console.error(err);
-        messagesDiv.innerHTML = "<p>Error loading messages.</p>";
-      }
-    }
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const name = document.getElementById('name').value.trim();
-      const message = document.getElementById('message').value.trim();
-      if (!name || !message) return alert("Please fill out both fields.");
-
-      const res = await fetch('/.netlify/functions/saveUser', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, message })
-      });
-
-      const result = await res.json();
-      alert(result.message);
-      form.reset();
-      loadMessages();
-    });
-
-    loadMessages();
-  </script>
+    <script src="main.js"></script>
 </body>
 </html>
